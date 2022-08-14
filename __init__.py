@@ -72,7 +72,7 @@ async def _(bot: Bot,
                            f'合不合适起码相处三分钟再说吧'
                            ]    
             
-            await draw_wife.finish(random.choice(draw_refuse))
+            await draw_wife.finish(random.choice(draw_refuse), at_sender=True)
     except KeyError:
         pass
     group_user_wife[group][uid]['time'] = time.time()    
@@ -87,7 +87,7 @@ async def _(bot: Bot,
     url = f"http://q1.qlogo.cn/g?b=qq&nk={user_wife}&s=640"
     group_user_wife[group][uid]['wife']['icon'] = url
     msg_tuple = (f'你的群老婆是{wife_name}', image(url), "好好相处哦")
-    await draw_wife.finish(Message(msg_tuple))
+    await draw_wife.finish(Message(msg_tuple), at_sender=True)
 
 @my_wife.handle()
 async def _(bot: Bot,
@@ -100,14 +100,14 @@ async def _(bot: Bot,
         group = event.group_id
         try:
             if not group_user_wife[group][uid]:
-                await my_wife.finish('你还没有抽群老婆哦')
+                await my_wife.finish('你还没有抽群老婆哦', at_sender=True)
             else:
                 wife_name = group_user_wife[group][uid]['wife']['name']
                 wife_avatar = group_user_wife[group][uid]['wife']['icon'] 
                 msg_tuple = (f'你当前的群老婆是{wife_name}', image(wife_avatar))
-                await my_wife.send(Message(msg_tuple))
+                await my_wife.send(Message(msg_tuple), at_sender=True)
         except KeyError:
-            await my_wife.finish("你还没有抽群老婆哦")
+            await my_wife.finish("你还没有抽群老婆哦", at_sender=True)
 
 @at_wife.handle()
 async def _(bot: Bot,
@@ -120,13 +120,13 @@ async def _(bot: Bot,
         group = event.group_id
         try:
             if not group_user_wife[group][uid]:
-                await my_wife.finish('你还没有抽群老婆哦')
+                await my_wife.finish('你还没有抽群老婆哦', at_sender=True)
             else:
                 wife_qq = group_user_wife[group][uid]['wife']['qq']
                 msg = at(wife_qq)
                 await at_wife.send(msg)
         except KeyError:
-            await my_wife.finish('你还没有抽群老婆哦')  
+            await my_wife.finish('你还没有抽群老婆哦', at_sender=True)  
             
         
 
