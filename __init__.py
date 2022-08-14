@@ -46,7 +46,9 @@ draw_wife = on_command("抽群老婆",permission=GROUP, priority=5, block=True)
 my_wife = on_command("我的群老婆",permission=GROUP, priority=5, block=True)
 at_wife = on_command("呼叫老婆",permission=GROUP, priority=5, block=True)
 group_user_wife = {}
+
 @draw_wife.handle()
+
 async def _(bot: Bot,
             event: GroupMessageEvent,
             state: T_State,
@@ -56,12 +58,15 @@ async def _(bot: Bot,
     group = event.group_id
     global group_user_wife
     try:
-        if group_user_wife[group][uid]:
-            pass
-        else:
-            group_user_wife[group] = {}
+        if group_user_wife[group]:
+           pass 
     except KeyError:
         group_user_wife[group] = {}
+        
+    try:
+        if group_user_wife[group][uid]:
+            pass
+    except KeyError:
         group_user_wife[group][uid] = {}
     try:
         time_pass = int (time.time() - group_user_wife[group][uid]['time'])
