@@ -14,23 +14,23 @@ import random
 import time
 from nonebot.params import CommandArg
 from models.group_member_info import GroupInfoUser
-__zx_plugin_name__ = "群友老婆"
+__zx_plugin_name__ = "群老婆"
 __plugin_usage__ = """
 usage:
-    抽群友老婆:
+    抽群老婆:
         有三分钟cd
         指令:
-        抽群友老婆
-    我的群友老婆:
+        抽群老婆
+    我的群老婆:
         指令:
-        我的群友老婆
+        我的群老婆
     呼叫老婆:
         指令:
         呼叫老婆
         
 """.strip()
-__plugin_des__ = "抽群友老婆"
-__plugin_cmd__ = ["抽群友老婆", "我的群友老婆", "呼叫老婆"]
+__plugin_des__ = "抽群老婆"
+__plugin_cmd__ = ["抽群老婆", "我的群老婆", "呼叫老婆"]
 __plugin_type__ = ("群内小游戏",)
 __plugin_version__ = 1.0
 __plugin_author__ = "冰蓝色光点"
@@ -38,12 +38,12 @@ __plugin_settings__ = {
     "level": 5,
     "default_status": True,
     "limit_superuser": False,
-    "cmd": ["抽群友老婆", "我的群友老婆", "呼叫老婆"],
+    "cmd": ["抽群老婆", "我的群老婆", "呼叫老婆"],
 }
 
 
-draw_wife = on_command("抽群友老婆",permission=GROUP, priority=5, block=True)
-my_wife = on_command("我的群友老婆",permission=GROUP, priority=5, block=True)
+draw_wife = on_command("抽群老婆",permission=GROUP, priority=5, block=True)
+my_wife = on_command("我的群老婆",permission=GROUP, priority=5, block=True)
 at_wife = on_command("呼叫老婆",permission=GROUP, priority=5, block=True)
 group_user_wife = {}
 @draw_wife.handle()
@@ -86,7 +86,7 @@ async def _(bot: Bot,
     group_user_wife[group][uid]['wife']['name'] = wife_name
     url = f"http://q1.qlogo.cn/g?b=qq&nk={user_wife}&s=640"
     group_user_wife[group][uid]['wife']['icon'] = url
-    msg_tuple = (f'你的群友老婆是{wife_name}', image(url), "好好相处哦")
+    msg_tuple = (f'你的群老婆是{wife_name}', image(url), "好好相处哦")
     await draw_wife.finish(Message(msg_tuple))
 
 @my_wife.handle()
@@ -100,14 +100,14 @@ async def _(bot: Bot,
         group = event.group_id
         try:
             if not group_user_wife[group][uid]:
-                await my_wife.finish('你还没有抽群友老婆哦')
+                await my_wife.finish('你还没有抽群老婆哦')
             else:
                 wife_name = group_user_wife[group][uid]['wife']['name']
                 wife_avatar = group_user_wife[group][uid]['wife']['icon'] 
-                msg_tuple = (f'你当前的群友老婆是{wife_name}', image(wife_avatar))
+                msg_tuple = (f'你当前的群老婆是{wife_name}', image(wife_avatar))
                 await my_wife.send(Message(msg_tuple))
         except KeyError:
-            await my_wife.finish("你还没有抽群友老婆哦")
+            await my_wife.finish("你还没有抽群老婆哦")
 
 @at_wife.handle()
 async def _(bot: Bot,
@@ -120,13 +120,13 @@ async def _(bot: Bot,
         group = event.group_id
         try:
             if not group_user_wife[group][uid]:
-                await my_wife.finish('你还没有抽群友老婆哦')
+                await my_wife.finish('你还没有抽群老婆哦')
             else:
                 wife_qq = group_user_wife[group][uid]['wife']['qq']
                 msg = at(wife_qq)
                 await at_wife.send(msg)
         except KeyError:
-            await my_wife.finish('你还没有抽群友老婆哦')  
+            await my_wife.finish('你还没有抽群老婆哦')  
             
         
 
