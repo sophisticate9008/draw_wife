@@ -39,7 +39,7 @@ usage:
 __plugin_des__ = "抽群老婆"
 __plugin_cmd__ = ["抽群老婆", "我的群老婆", "呼叫老婆"]
 __plugin_type__ = ("群内小游戏",)
-__plugin_version__ = 1.5
+__plugin_version__ = 1.0
 __plugin_author__ = "冰蓝色光点"
 __plugin_settings__ = {
     "level": 5,

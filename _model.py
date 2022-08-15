@@ -16,7 +16,7 @@ class My_wife(db.Model):
         me = await query.gino.first()
         if me:
             await me.update(wife_qq = wife_qq).apply()
-            me.count_draw += 1
+            await me.update(count_draw = me.count_draw + 1).apply()
         else:
             await cls.create(group_id = group_id, my_qq = my_qq, wife_qq = wife_qq, count_draw = 1)
     @classmethod
