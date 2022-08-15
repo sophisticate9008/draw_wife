@@ -3,10 +3,9 @@ from services.db_context import db
 
 class My_wife(db.Model):
     __tablename__ = "my_wife"
-
+    group_id = db.Column(db.BigInteger(), nullable=False)
     my_qq = db.Column(db.BigInteger(), primary_key=True)
     wife_qq = db.Column(db.BigInteger(), nullable=False)
-    group_id = db.Column(db.BigInteger(), nullable=False)
     count_draw = db.Column(db.BigInteger(), nullable=False, default = 0)
     _idx1 = db.Index("my_wife_uid", "group_id", "my_qq", unique=True)
     @classmethod
