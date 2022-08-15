@@ -5,7 +5,7 @@ class My_wife(db.Model):
     __tablename__ = "my_wife"
     id = db.Column(db.Integer(), primary_key=True)
     group_id = db.Column(db.BigInteger(), nullable=False)
-    my_qq = db.Column(db.BigInteger(), primary_key=True)
+    my_qq = db.Column(db.BigInteger(), nullable=True)
     wife_qq = db.Column(db.BigInteger(), nullable=False)
     count_draw = db.Column(db.BigInteger(), nullable=False, default = 0)
     _idx1 = db.Index("my_wife_uid", "group_id", "my_qq", unique=True)
