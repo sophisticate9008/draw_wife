@@ -3,6 +3,7 @@ from services.db_context import db
 
 class My_wife(db.Model):
     __tablename__ = "my_wife"
+    id = db.Column(db.Integer(), primary_key=True)
     group_id = db.Column(db.BigInteger(), nullable=False)
     my_qq = db.Column(db.BigInteger(), primary_key=True)
     wife_qq = db.Column(db.BigInteger(), nullable=False)
