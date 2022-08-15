@@ -8,7 +8,7 @@ class My_wife(db.Model):
     my_qq = db.Column(db.BigInteger(), nullable=True)
     wife_qq = db.Column(db.BigInteger(), nullable=False)
     count_draw = db.Column(db.BigInteger(), nullable=False, default = 0)
-    _idx1 = db.Index("my_wife_uid", "group_id", "my_qq", unique=True)
+    wife_idx1 = db.Index("my_wife_uid", "group_id", "my_qq", unique=True)
     @classmethod
     async def wife_revise(cls, group_id:int, my_qq:int, wife_qq):
         query = cls.query.where((cls.group_id == group_id) & (cls.my_qq == my_qq))
