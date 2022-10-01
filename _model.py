@@ -1,4 +1,4 @@
-
+import re
 from services.db_context import db
 
 class My_wife(db.Model):
@@ -36,4 +36,46 @@ class My_wife(db.Model):
         else:
             query = await cls.query.where((cls.group_id == group_id)).gino.all()
         return query
-         
+
+class fake_wife(db.Model):
+    __tablename__ = "fake_wife"
+    id = db.Column(db.Integer(), primary_key=True)
+    group_id = db.Column(db.BigInteger(), nullable=False)
+    uid = db.Column(db.BigInteger(), nullable=True)       
+    name = db.Column(db.Unicode(), nullable=False)
+    @classmethod
+    async def make_wife(cls, group, uid, name):
+        query = cls.query.where((cls.group_id == group) & (cls.uid == uid))
+        query = query.with_for_update()
+        me = await query.gino.first()     
+        if me:    
+            await me.update(name = name).apply()
+        else:
+            await cls.create(group_id = group, uid = uid, name = name)
+    @classmethod
+    async def del_wife(cls, group, uid):
+        query = cls.query.where((cls.group_id == group) & (cls.uid == uid))
+        query = query.with_for_update()
+        me = await query.gino.first()
+        try:
+            if me is None:
+                return True
+            else:
+                await cls.delete.where((cls.group_id == group) & (cls.uid == uid)).gino.status()
+                return True
+        except Exception:
+            return False
+    @classmethod
+    async def get_name(cls, group, uid):
+        query = cls.query.where((cls.group_id == group) & (cls.uid == uid))
+        query = query.with_for_update()
+        me = await query.gino.first()     
+        return me.name
+    
+    @classmethod
+    async def get_all(cls, group):
+        if not group:
+            query = await cls.query.gino.all()
+        else:
+            query = await cls.query.where((cls.group_id == group)).gino.all()
+        return query
