@@ -179,7 +179,7 @@ async def _(bot: Bot,
         group = event.group_id
         user_wife = await My_wife.wife_view(group, uid)
         if user_wife == 0:
-            await my_wife.finish("你还没有抽群老婆哦", at_sender=True) 
+            await at_wife.finish("你还没有抽群老婆哦", at_sender=True) 
         else:
             if isfakewife(user_wife):
                 try: 
@@ -187,7 +187,7 @@ async def _(bot: Bot,
                     name = list_[0]
                     msg = "@" + f"{name}"
                 except:
-                    await my_wife.finish("你的老婆是拟造老婆，现已被创造者删除，请更换",at_sender=True)
+                    await at_wife.finish("你的老婆是拟造老婆，现已被创造者删除，请更换",at_sender=True)
             else:
                 msg = at(user_wife)
             await at_wife.finish(msg)
