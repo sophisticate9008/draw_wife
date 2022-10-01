@@ -156,7 +156,7 @@ async def _(bot: Bot,
                     wife_name = list_[0]
                     msg_tuple = (f'你当前的群老婆是{wife_name}', image(b64=pic2b64(list_[1])), "好好相处哦")   
                 except:
-                    await my_wife.finish("你的老婆是拟造老婆，现已被创造者删除，请更换")             
+                    await my_wife.finish("你的老婆是拟造老婆，现已被创造者删除，请更换",at_sender=True)             
                 await my_wife.finish(Message(msg_tuple), at_sender=True)
             else:
                 wife_name = (await GroupInfoUser.get_member_info(user_wife, group)).user_name
