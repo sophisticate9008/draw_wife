@@ -2,6 +2,7 @@ import asyncio
 import base64
 from io import BytesIO
 import os
+from re import A
 from tokenize import group
 from unicodedata import name
 from utils.data_utils import init_rank
@@ -55,7 +56,8 @@ usage:
         海王榜 num
     拟造老婆:
         拟造老婆 name 图片
-        一人唯一，加入抽老婆行列
+        一人一次加入抽老婆行列
+        不被发现就是匿名【doge】
     删除拟造老婆:
         删除拟造老婆
     群拟造老婆列表:
@@ -175,18 +177,21 @@ async def _(bot: Bot,
         global group_user_wife
         uid = event.user_id
         group = event.group_id
-        try:
-            wife_qq = group_user_wife[group][uid]['wife']['qq']
-            msg = at(wife_qq)
-            await at_wife.send(msg)
-        except KeyError:
-            user_wife = await My_wife.wife_view(group, uid)
-            if user_wife == 0:
-                await my_wife.finish("你还没有抽群老婆哦", at_sender=True) 
+        user_wife = await My_wife.wife_view(group, uid)
+        if user_wife == 0:
+            await my_wife.finish("你还没有抽群老婆哦", at_sender=True) 
+        else:
+            if isfakewife(user_wife):
+                try: 
+                    list_ = await get_fake_wife_info(group, user_wife)
+                    name = list_[0]
+                    msg = "@" + f"{name}"
+                except:
+                    await my_wife.finish("你的老婆是拟造老婆，现已被创造者删除，请更换",at_sender=True)
             else:
                 msg = at(user_wife)
-                await at_wife.finish(msg)
-                
+            await at_wife.finish(msg)
+            
                 
 @see_king.handle()
 async def _(event: GroupMessageEvent, arg: Message = CommandArg()):
