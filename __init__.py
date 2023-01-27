@@ -237,9 +237,9 @@ async def _(
     img_list = get_message_img(img_list)
     img_url = img_list[0]
     pil = await get_pic_pil(img_url)
-    pil.save(res + f'{group}_{uid}.jpg')
+    pil.save(res + f'{group}_{uid}.png')
     await asyncio.sleep(2)
-    path = res + f"{group}_{uid}.jpg"
+    path = res + f"{group}_{uid}.png"
     pil = Image.open(path)
     await fake_wife.make_wife(group, uid, name)
     msg_tuple = (f'成功拟造群老婆\n{name}', image(b64=pic2b64(pil)))
@@ -254,7 +254,7 @@ async def _(bot: Bot,
     uid = event.user_id * 10000
     group = event.group_id   
     await fake_wife.del_wife(group, uid)
-    path = res + f"{group}_{uid}.jpg"
+    path = res + f"{group}_{uid}.png"
     os.remove(path)
     await delfakewife.finish("成功删除你的拟造老婆", at_sender=True)
 
@@ -302,7 +302,7 @@ async def get_fake_wife_info(group, uid):
     list = []
     try:
         list.append(await fake_wife.get_name(group, uid))
-        path = res + f"{group}_{uid}.jpg"
+        path = res + f"{group}_{uid}.png"
         pic = Image.open(path)
         list.append(pic)
         return list
