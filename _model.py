@@ -18,7 +18,7 @@ class My_wife(Model):
 
         if me := await cls.get_or_none(group_id=group_id, my_qq=my_qq):
             me.wife_qq = wife_qq
-            me.cout_draw += 1
+            me.count_draw += 1
             await me.save()
         else:
             await cls.create(group_id = group_id, my_qq = my_qq, wife_qq = wife_qq, count_draw = 1)
