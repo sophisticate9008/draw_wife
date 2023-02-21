@@ -43,7 +43,7 @@ class fake_wife(Model):
     id = fields.IntField(pk=True, generated=True, auto_increment=True)
     group_id = fields.BigIntField()
     uid = fields.BigIntField()    
-    name = fields.CharField()
+    name = fields.CharField(255)
     @classmethod
     async def make_wife(cls, group_id, uid, name):
 
