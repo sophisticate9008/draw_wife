@@ -132,7 +132,7 @@ async def _(bot: Bot,
         await My_wife.wife_revise(group, uid, user_wife)
         await draw_wife.finish(Message(msg_tuple), at_sender=True) 
     else:
-        wife_name = (await GroupInfoUser.get_member_info(user_wife, group)).user_name
+        wife_name = await GroupInfoUser.get_user_nickname(user_wife, group)
         url = f"http://q1.qlogo.cn/g?b=qq&nk={user_wife}&s=640"
         await My_wife.wife_revise(group, uid, user_wife)
         msg_tuple = (f'你的群老婆是{wife_name}', image(url), "好好相处哦")
@@ -160,7 +160,7 @@ async def _(bot: Bot,
                     await my_wife.finish("你的老婆是拟造老婆，现已被创造者删除，请更换",at_sender=True)             
                 await my_wife.finish(Message(msg_tuple), at_sender=True)
             else:
-                wife_name = (await GroupInfoUser.get_member_info(user_wife, group)).user_name
+                wife_name = await GroupInfoUser.get_user_nickname(user_wife, group)
                 url = f"http://q1.qlogo.cn/g?b=qq&nk={user_wife}&s=640"
                 msg_tuple = (f'你当前的群老婆是\n{wife_name}', image(url))
                 await my_wife.finish(Message(msg_tuple), at_sender=True)                
