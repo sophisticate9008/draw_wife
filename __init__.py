@@ -118,7 +118,7 @@ async def _(bot: Bot,
     except KeyError:
         pass
     group_user_wife[group][uid]['time'] = time.time()    
-    wife_list = await GroupInfoUser.get_group_member_id_list(group)
+    wife_list = list(await GroupInfoUser.get_group_member_id_list(group))
     fake_wife_list = await get_all_fakewife(group)
     wife_list.extend(fake_wife_list)
     user_wife = int(random.choice(wife_list))
