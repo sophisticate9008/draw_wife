@@ -31,7 +31,7 @@ from utils.utils import get_message_img
 from utils.http_utils import AsyncHttpx
 from._model import fake_wife
 from._model import My_wife
-
+import json
 
 path_ = os.path.dirname(__file__)
 path_ = path_.replace('\\', '/')
@@ -81,6 +81,7 @@ draw_wife = on_command("抽群老婆",permission=GROUP, priority=5, block=True)
 my_wife = on_command("我的群老婆",permission=GROUP, priority=5, block=True)
 at_wife = on_command("呼叫老婆",permission=GROUP, priority=5, block=True)
 see_king = on_command("海王榜",permission=GROUP, priority=5, block=True)
+famous_women = on_command('名媛榜',permission=GROUP, priority=5, block=True)
 delfakewife = on_command("删除拟造老婆",permission=GROUP, priority=5, block=True)
 fakewifelist = on_command("群拟造老婆列表",permission=GROUP, priority=5, block=True)
 group_user_wife = {}
@@ -125,6 +126,8 @@ async def _(bot: Bot,
     while user_wife == uid:
         user_wife = int(random.choice(wife_list))
 
+    
+    
     if isfakewife(user_wife):
         list_ = await get_fake_wife_info(group, user_wife)
         wife_name = list_[0]
@@ -207,6 +210,20 @@ async def _(event: GroupMessageEvent, arg: Message = CommandArg()):
     if rank_image:
         await see_king.finish(image(b64=rank_image.pic2bs4()))
 
+@famous_women.handle()
+async def _(event: GroupMessageEvent, arg: Message = CommandArg()):
+    num = arg.extract_plain_text().strip()
+    if is_number(num) and 51 > int(num) > 10:
+        num = int(num)
+    else:
+        num = 10
+    data = get_group_data_in_json(event.group_id)
+    
+    all_user_id = data.keys()
+    all_user_data = [data[uid] for uid in all_user_id]
+    rank_image = await init_rank("名媛排行榜", all_user_id, all_user_data, event.group_id, num)
+    if rank_image:
+        await famous_women.finish(image(b64=rank_image.pic2bs4()))
 
 @make_wife.handle()
 async def _(bot: Bot,
@@ -322,6 +339,27 @@ def pic2b64(pic: Image) -> str:
     base64_str = base64.b64encode(buf.getvalue()).decode()
     return "base64://" + base64_str
 
+def record_count_in_json(group, uid):
+    with open(str(path_) + '/data.json', 'r') as f:
+        data = json.load(f)
+    if data.get(group):
+        if data[group].get(uid):
+            data[group][uid] += 1
+        else:
+            data[group][uid] = 1
+    else:
+        data[group] = {}
+        data[group][uid] = 1
+    
+    with open(str(path_) + '/data.json', 'w') as f:
+        json.dump(data, f)
+
+def get_group_data_in_json(group):
+    with open(str(path_) + '/data.json', 'r') as f:
+        data = json.load(f) 
+       
+    
+    
 @scheduler.scheduled_job(
     "cron",
     hour=23,
