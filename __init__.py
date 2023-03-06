@@ -357,7 +357,7 @@ def record_count_in_json(group, uid):
 def get_group_data_in_json(group):
     with open(str(path_) + '/data.json', 'r') as f:
         data = json.load(f) 
-    return data
+    return data[str(group)]
     
     
 @scheduler.scheduled_job(
