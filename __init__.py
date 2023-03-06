@@ -125,7 +125,7 @@ async def _(bot: Bot,
     user_wife = int(random.choice(wife_list))
     while user_wife == uid:
         user_wife = int(random.choice(wife_list))
-
+    record_count_in_json(group, user_wife)
     
     
     if isfakewife(user_wife):
