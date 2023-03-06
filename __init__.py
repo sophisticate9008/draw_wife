@@ -219,7 +219,7 @@ async def _(event: GroupMessageEvent, arg: Message = CommandArg()):
         num = 10
     data = get_group_data_in_json(event.group_id)
     
-    all_user_id = data.keys()
+    all_user_id = list(data.keys())
     all_user_data = [data[uid] for uid in all_user_id]
     rank_image = await init_rank("名媛排行榜", all_user_id, all_user_data, event.group_id, num)
     if rank_image:
@@ -340,6 +340,8 @@ def pic2b64(pic: Image) -> str:
     return "base64://" + base64_str
 
 def record_count_in_json(group, uid):
+    group = str(group)
+    uid = str(uid)
     with open(str(path_) + '/data.json', 'r') as f:
         data = json.load(f)
     if data.get(group):
