@@ -1,6 +1,7 @@
 import re
-from services.db_context import Model
 from tortoise import fields
+from services.db_context import Model
+
 
 class My_wife(Model):
     id = fields.IntField(pk=True, generated=True, auto_increment=True)
