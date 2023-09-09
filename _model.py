@@ -1,77 +1,72 @@
-import re
-from tortoise import fields
-from services.db_context import Model
+import asyncio
+import functools
+import os
+import sqlite3
+
+conn = sqlite3.connect(os.path.dirname(__file__)+"/wifes.db", check_same_thread=False)
+
+
+class Model:
+    __abstract__ = True
+
+    def __init__(self, **kwargs):
+        for attr, value in kwargs.items():
+            setattr(self, attr, value)
+
+    @classmethod
+    async def execute(cls, command: str, *args):
+        loop = asyncio.get_event_loop()
+        cursor = await loop.run_in_executor(None, functools.partial(conn.cursor))
+        try:
+            await loop.run_in_executor(None, functools.partial(cursor.execute, command, args))
+            rows = await loop.run_in_executor(None, cursor.fetchall)
+            await loop.run_in_executor(None, conn.commit)  # 提交数据
+        except Exception as e:
+            raise e
+        finally:
+            await loop.run_in_executor(None, cursor.close)
+        return rows
+    
 
 
 class My_wife(Model):
-    id = fields.IntField(pk=True, generated=True, auto_increment=True)
-    group_id = fields.BigIntField()
-    my_qq = fields.BigIntField()
-    wife_qq = fields.BigIntField()
-    count_draw = fields.IntField()
+    __tablename__ = "my_wife"
+    async def __init__():
+        sql_create_table = """
+        CREATE TABLE IF NOT EXISTS my_wife (
+          group_id BIGINT NOT NULL,
+          my_qq BIGINT NULL,
+          wife_qq BIGINT NOT NULL,
+          count_draw INTEGER NOT NULL DEFAULT 0,
+          UNIQUE(group_id, wife_qq)
+        );
+        """
+        await Model.execute(sql_create_table)
     
-    class Meta:
-        table = "my_wife"
-        table_description = "群老婆数据表"
-        unique_together = ("my_qq", "group_id")          
     @classmethod
     async def wife_revise(cls, group_id:int, my_qq:int, wife_qq):
-
-        if me := await cls.get_or_none(group_id=group_id, my_qq=my_qq):
-            me.wife_qq = wife_qq
-            me.count_draw += 1
-            await me.save()
+        command = f"SELECT * FROM {cls.__tablename__} WHERE group_id=? AND my_qq=?;"
+        rows = await cls.execute(command, group_id, my_qq)
+        me = rows[0] if rows else None
+        if me:
+            command = f"UPDATE {cls.__tablename__} SET wife_qq=?, count_draw=count_draw+1 WHERE group_id=? AND my_qq=?;"
+            await cls.execute(command, wife_qq, group_id, my_qq)
         else:
-            await cls.create(group_id = group_id, my_qq = my_qq, wife_qq = wife_qq, count_draw = 1)
+            command = f"INSERT INTO {cls.__tablename__} (group_id, my_qq, wife_qq, count_draw) VALUES (?, ?, ?, ?);"
+            await cls.execute(command, group_id, my_qq, wife_qq, 1)
+
     @classmethod
     async def wife_view(cls, group_id:int, my_qq:int):
+        command = f"SELECT wife_qq FROM {cls.__tablename__} WHERE group_id=? AND my_qq=?;"
+        rows = await cls.execute(command, group_id, my_qq)
+        wife_qq = rows[0][0] if rows else 0
+        return wife_qq
 
-        if me := await cls.get_or_none(group_id=group_id, my_qq=my_qq):
-            return me.wife_qq
+    @classmethod
+    async def get_all_users(cls, group_id: int):
+        if group_id is None:
+            command = f"SELECT my_qq, count_draw FROM {cls.__tablename__};"
         else:
-            return 0
-
-    @classmethod
-    async def get_all_users(cls, group_id:int):
-        if not group_id:
-            query = await cls.all()
-        else:
-            query = await cls.filter(group_id = group_id).all()
-        return query
-
-class fake_wife(Model):
-    __tablename__ = "fake_wife"
-    id = fields.IntField(pk=True, generated=True, auto_increment=True)
-    group_id = fields.BigIntField()
-    uid = fields.BigIntField()    
-    name = fields.CharField(255)
-    @classmethod
-    async def make_wife(cls, group_id, uid, name):
-
-        if me := await cls.get_or_none(group_id=group_id, uid=uid):  
-            me.name = name
-            await me.save()
-        else:
-            await cls.create(group_id = group_id, uid = uid, name = name)
-    @classmethod
-    async def del_wife(cls, group_id, uid):
-        try:
-            if me := await cls.get_or_none(group_id=group_id, uid=uid):
-                await me.delete()
-                return True
-            else:
-                return True
-        except Exception:
-            return False
-    @classmethod
-    async def get_name(cls, group_id, uid):
-        if me := await cls.get_or_none(group_id=group_id, uid=uid): 
-            return me.name
-    
-    @classmethod
-    async def get_all(cls, group_id):
-        if not group_id:
-            query = await cls.all()
-        else:
-            query = await cls.filter(group_id = group_id).all()
-        return query
+            command = f"SELECT my_qq, count_draw FROM {cls.__tablename__} WHERE group_id=?;"
+        rows = await cls.execute(command, group_id)
+        return list(rows)
